@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}SMS{% endblock %} — EduBright SMS</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/sms.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">SMS MENU</div>
+  <nav>
+    <a href="{% url 'dashboard' %}"       class="{% if active == 'dashboard'   %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'student_list' %}"    class="{% if active == 'students'    %}active{% endif %}">Students</a>
+    <a href="{% url 'user_list' %}"       class="{% if active == 'users'       %}active{% endif %}">Users</a>
+    <a href="{% url 'course_list' %}"     class="{% if active == 'courses'     %}active{% endif %}">Courses</a>
+    <a href="{% url 'fee_list' %}"        class="{% if active == 'fees'        %}active{% endif %}">Fees</a>
+    <a href="{% url 'exam_list' %}"       class="{% if active == 'exams'       %}active{% endif %}">Exams</a>
+    <a href="{% url 'role_list' %}"       class="{% if active == 'roles'       %}active{% endif %}">Roles</a>
+    <a href="{% url 'permission_list' %}" class="{% if active == 'permissions' %}active{% endif %}">Permissions</a>
+    <a href="{% url 'login_list' %}"      class="{% if active == 'logins'      %}active{% endif %}">Login Records</a>
+    <a href="{% url 'logout' %}" style="margin-top:18px;border-top:1px solid rgba(0,0,0,0.18);padding-top:12px;">⏻ Logout</a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <!-- alerts -->
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-{% if 'error' in msg.tags %}error{% elif 'success' in msg.tags %}success{% else %}info{% endif %}">
+        {{ msg }}
+        <span style="float:right;cursor:pointer;font-weight:700;" onclick="this.parentElement.remove()">✕</span>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</main>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

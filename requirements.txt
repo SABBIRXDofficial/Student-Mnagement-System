@@ -1,0 +1,5 @@
+Django==4.2.13
+mysqlclient==2.2.4
+django-crispy-forms==2.1
+crispy-bootstrap5==0.7
+python-decouple==3.8

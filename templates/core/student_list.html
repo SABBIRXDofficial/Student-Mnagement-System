@@ -1,0 +1,60 @@
+{% extends "sms_base.html" %}
+{% block title %}Students{% endblock %}
+{% block content %}
+{% with active="students" %}
+
+<!-- ADD FORM -->
+<div class="panel">
+  <h2>Add New Student</h2>
+  <form method="POST" action="{% url 'student_create' %}">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="create">
+    <input type="text"   name="stu_name"   placeholder="Full Name"      required>
+    <br><br>
+    <input type="email"  name="stu_email"  placeholder="Email Address"  required>
+    <br><br>
+    <input type="tel"    name="stu_mobile" placeholder="Mobile Number">
+    <br><br>
+    <input type="text"   name="stu_add"    placeholder="Address">
+    <br><br>
+    <input type="password" name="stu_pass" placeholder="Password"       required>
+    <br><br>
+    <button type="submit" class="btn-green">Save Student</button>
+  </form>
+</div>
+
+<!-- DATA TABLE -->
+<div class="panel">
+  <h2>View Student Data</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in students %}
+      <tr>
+        <td>{{ s.stu_id }}</td>
+        <td>{{ s.stu_name }}</td>
+        <td>{{ s.stu_email }}</td>
+        <td>{{ s.stu_mobile|default:"—" }}</td>
+        <td>
+          <a href="{% url 'student_edit' s.stu_id %}" class="btn-sm btn-edit">Edit</a>
+          <a href="{% url 'student_delete' s.stu_id %}" class="btn-sm btn-del"
+             onclick="return confirm('Delete {{ s.stu_name }}?')">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr class="empty-row"><td colspan="5">No students found. Add one above.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endwith %}
+{% endblock %}

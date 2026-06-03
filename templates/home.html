@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduBright Academy — Inspiring Minds</title>
+  {% load static %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --navy:#0d2137; --teal:#1a6b72; --gold:#f0a500;
+      --coral:#e05a4e; --cream:#fdf8f2; --white:#fff;
+      --text:#2b3a4a; --muted:#6b7f90; --radius:16px;
+    }
+    html { scroll-behavior:smooth; }
+    body { font-family:'DM Sans',sans-serif; color:var(--text); background:var(--cream); overflow-x:hidden; }
+    h1,h2,h3 { font-family:'Playfair Display',serif; }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:1000;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 6%;
+      background:rgba(13,33,55,0.93);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      transition:padding 0.3s;
+    }
+    nav img { width:60px; height:60px; object-fit:contain; }
+    .nav-links ul { display:flex; list-style:none; gap:4px; }
+    .nav-links ul li a {
+      text-decoration:none; color:rgba(255,255,255,0.82);
+      font-size:0.92rem; font-weight:500; padding:8px 16px;
+      border-radius:40px; transition:all 0.25s;
+    }
+    .nav-links ul li a:hover { color:#fff; background:rgba(255,255,255,0.12); }
+    .nav-links ul li:last-child a {
+      background:var(--gold); color:var(--navy);
+      font-weight:700; padding:8px 22px;
+    }
+    .nav-links ul li:last-child a:hover {
+      background:#ffc233; transform:translateY(-1px);
+      box-shadow:0 6px 18px rgba(240,165,0,0.4);
+    }
+
+    /* HERO */
+    .header {
+      min-height:100vh; width:100%;
+      background: linear-gradient(160deg,rgba(13,33,55,0.88) 0%,rgba(26,107,114,0.72) 100%),
+                  url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1600&q=80') center/cover no-repeat;
+      display:flex; flex-direction:column; position:relative; overflow:hidden;
+    }
+    .header::before {
+      content:''; position:absolute; width:600px; height:600px; border-radius:50%;
+      background:radial-gradient(circle,rgba(240,165,0,0.15) 0%,transparent 70%);
+      top:-100px; right:-100px; pointer-events:none;
+    }
+    .text-box {
+      flex:1; display:flex; flex-direction:column; align-items:center;
+      justify-content:center; text-align:center; padding:120px 6% 80px;
+      position:relative; z-index:2; animation:fadeUp 0.9s ease both;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+    .hero-eyebrow {
+      display:inline-block;
+      background:rgba(240,165,0,0.18); border:1px solid rgba(240,165,0,0.4);
+      color:var(--gold); font-size:0.78rem; font-weight:600;
+      letter-spacing:2.5px; text-transform:uppercase;
+      padding:6px 18px; border-radius:40px; margin-bottom:28px;
+    }
+    .text-box h1 {
+      font-size:clamp(2.4rem,6vw,4.2rem); color:#fff; line-height:1.12;
+      max-width:780px; font-weight:900; margin-bottom:22px;
+      text-shadow:0 4px 24px rgba(0,0,0,0.3);
+    }
+    .text-box h1 span { color:var(--gold); }
+    .text-box p {
+      font-size:1.05rem; color:rgba(255,255,255,0.75);
+      max-width:560px; line-height:1.7; margin-bottom:44px;
+    }
+    .hero-actions { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+    .hero-btn {
+      display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+      font-size:0.92rem; font-weight:600; padding:14px 32px;
+      border-radius:50px; transition:all 0.3s; letter-spacing:0.3px;
+    }
+    .hero-btn.primary { background:var(--gold); color:var(--navy); box-shadow:0 8px 28px rgba(240,165,0,0.35); }
+    .hero-btn.primary:hover { background:#ffc233; transform:translateY(-2px); box-shadow:0 12px 36px rgba(240,165,0,0.5); }
+    .hero-btn.outline { background:transparent; color:#fff; border:2px solid rgba(255,255,255,0.4); }
+    .hero-btn.outline:hover { border-color:#fff; background:rgba(255,255,255,0.1); transform:translateY(-2px); }
+    .hero-stats {
+      display:flex; justify-content:center;
+      background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+      border-radius:20px; margin-top:60px; backdrop-filter:blur(8px);
+      overflow:hidden; width:fit-content; align-self:center;
+    }
+    .stat-item { padding:22px 40px; text-align:center; border-right:1px solid rgba(255,255,255,0.1); }
+    .stat-item:last-child { border-right:none; }
+    .stat-item .num { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; color:var(--gold); display:block; }
+    .stat-item .label { font-size:0.75rem; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:1px; }
+
+    /* SECTION SHARED */
+    section { padding:100px 8%; }
+    .section-tag { display:inline-block; color:var(--teal); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:2.5px; margin-bottom:12px; }
+    section > h2 { font-size:clamp(1.8rem,4vw,2.8rem); color:var(--navy); margin-bottom:12px; }
+    section > .sub { color:var(--muted); font-size:1rem; max-width:520px; line-height:1.7; margin-bottom:60px; }
+
+    /* COURSES */
+    .course { background:var(--cream); text-align:center; }
+    .course .sub { margin-left:auto; margin-right:auto; }
+    .courses-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+    .course-card {
+      background:#fff; border-radius:var(--radius); padding:36px 28px;
+      text-align:left; position:relative; overflow:hidden;
+      border:1px solid rgba(13,33,55,0.06);
+      transition:transform 0.3s,box-shadow 0.3s; cursor:pointer;
+    }
+    .course-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--gradient,linear-gradient(90deg,var(--teal),var(--gold))); }
+    .course-card:nth-child(1){--gradient:linear-gradient(90deg,#1a6b72,#0d2137)}
+    .course-card:nth-child(2){--gradient:linear-gradient(90deg,#f0a500,#e05a4e)}
+    .course-card:nth-child(3){--gradient:linear-gradient(90deg,#e05a4e,#9b4dca)}
+    .course-card:hover { transform:translateY(-6px); box-shadow:0 20px 48px rgba(13,33,55,0.12); }
+    .course-icon { width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:22px; }
+    .course-card:nth-child(1) .course-icon{background:#e8f5f6;color:var(--teal)}
+    .course-card:nth-child(2) .course-icon{background:#fef4e0;color:var(--gold)}
+    .course-card:nth-child(3) .course-icon{background:#fdecea;color:var(--coral)}
+    .course-card h3 { font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:12px;font-family:'Playfair Display',serif; }
+    .course-card p { color:var(--muted);font-size:0.9rem;line-height:1.7; }
+    .course-card .learn-more { display:inline-flex;align-items:center;gap:6px;margin-top:20px;color:var(--teal);font-size:0.85rem;font-weight:600;text-decoration:none;transition:gap 0.2s; }
+    .course-card:hover .learn-more{gap:10px}
+
+    /* FACILITIES */
+    .facilities { background:var(--navy); color:#fff; }
+    .facilities .section-tag{color:var(--gold)}
+    .facilities>h2{color:#fff}
+    .facilities>.sub{color:rgba(255,255,255,0.6)}
+    .facilities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+    .facility-card{border-radius:var(--radius);overflow:hidden;position:relative;cursor:pointer;background:#fff}
+    .facility-card img{width:100%;height:240px;object-fit:cover;display:block;transition:transform 0.5s}
+    .facility-card:hover img{transform:scale(1.06)}
+    .facility-info{padding:24px 22px 26px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-top:none;border-radius:0 0 var(--radius) var(--radius)}
+    .facility-info h3{font-size:1.1rem;color:#fff;margin-bottom:8px;font-family:'Playfair Display',serif}
+    .facility-info p{color:rgba(255,255,255,0.55);font-size:0.88rem;line-height:1.6}
+    .facility-tag{position:absolute;top:16px;left:16px;background:var(--gold);color:var(--navy);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:5px 12px;border-radius:30px;z-index:2}
+
+    /* CTA BAND */
+    .cta-band {
+      background:linear-gradient(135deg,var(--teal),var(--navy));
+      text-align:center; padding:80px 8%;
+    }
+    .cta-band h2 { color:#fff; font-size:2rem; margin-bottom:16px; }
+    .cta-band p  { color:rgba(255,255,255,0.7); max-width:480px; margin:0 auto 36px; font-size:1rem; line-height:1.7; }
+    .cta-actions { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+
+    /* FOOTER */
+    footer { background:#07151f; color:#fff; text-align:center; padding:60px 8% 40px; }
+    footer img { width:64px; margin-bottom:20px; opacity:0.9; }
+    footer h2 { font-size:1.5rem; margin-bottom:14px; color:var(--gold); }
+    footer p { color:rgba(255,255,255,0.5); font-size:0.9rem; max-width:540px; margin:0 auto 28px; line-height:1.7; }
+    .social-icons { display:flex; justify-content:center; gap:14px; margin-bottom:36px; }
+    .social-icons a { width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);font-size:1rem;text-decoration:none;transition:all 0.25s; }
+    .social-icons a:hover { background:var(--gold);border-color:var(--gold);color:var(--navy);transform:translateY(-3px); }
+    .footer-bottom { border-top:1px solid rgba(255,255,255,0.07); padding-top:24px; font-size:0.82rem; color:rgba(255,255,255,0.3); }
+    .footer-bottom p { margin-bottom:0; }
+
+    @media(max-width:900px){
+      .courses-grid,.facilities-grid{grid-template-columns:1fr}
+      .hero-stats{flex-direction:column;border-radius:var(--radius)}
+      .stat-item{border-right:none;border-bottom:1px solid rgba(255,255,255,0.1)}
+      .stat-item:last-child{border-bottom:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="{% url 'home' %}">
+    <img src="{% static 'images/logo.png' %}" alt="EduBright Logo" onerror="this.style.display='none'">
+  </a>
+  <div class="nav-links">
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#facilities">Campus</a></li>
+      <li><a href="#footer">Contact</a></li>
+      <li><a href="{% url 'login' %}">Login &nbsp;<i class="fa-solid fa-arrow-right-to-bracket fa-sm"></i></a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="header" id="home">
+  <div class="text-box">
+    <span class="hero-eyebrow"><i class="fa-solid fa-star fa-xs"></i>&nbsp; Est. 2001 &bull; Excellence in Education</span>
+    <h1>Inspiring Minds,<br><span>Transforming</span> Lives</h1>
+    <p>Using advanced personalised learning and a quality scoring algorithm, we ensure every student receives world-class education from our top educators.</p>
+    <div class="hero-actions">
+      <a href="{% url 'register' %}" class="hero-btn primary">
+        <i class="fa-solid fa-user-plus"></i> Register Now
+      </a>
+      <a href="{% url 'login' %}" class="hero-btn outline">
+        <i class="fa-solid fa-right-to-bracket fa-sm"></i> Login to Portal
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><span class="num">3,200+</span><span class="label">Students</span></div>
+      <div class="stat-item"><span class="num">180+</span><span class="label">Faculty</span></div>
+      <div class="stat-item"><span class="num">98%</span><span class="label">Pass Rate</span></div>
+      <div class="stat-item"><span class="num">22+</span><span class="label">Years</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section class="course" id="courses">
+  <span class="section-tag"><i class="fa-solid fa-book-open fa-xs"></i>&nbsp; What We Offer</span>
+  <h2>Courses We Offer</h2>
+  <p class="sub">Using advanced quality scoring and Machine Learning, we personalise every student's learning journey for maximum success.</p>
+  <div class="courses-grid">
+    <div class="course-card">
+      <div class="course-icon"><i class="fa-solid fa-flask"></i></div>
+      <h3>Intermediate</h3>
+      <p>A rigorous two-year programme covering Science, Humanities and Commerce streams, with structured coursework and practical lab sessions.</p>
+      <a href="{% url 'login' %}" class="learn-more">Enrol now <i class="fa-solid fa-arrow-right fa-xs"></i></a>
+    </div>
+    <div class="course-card">
+      <div class="course-icon"><i class="fa-solid fa-university"></i></div>
+      <h3>Degree</h3>
+      <p>Four-year undergraduate programmes in Engineering, Business and Liberal Arts with industry-linked internships and mentorship.</p>
+      <a href="{% url 'login' %}" class="learn-more">Enrol now <i class="fa-solid fa-arrow-right fa-xs"></i></a>
+    </div>
+    <div class="course-card">
+      <div class="course-icon"><i class="fa-solid fa-brain"></i></div>
+      <h3>Post Graduation</h3>
+      <p>Advanced research-intensive two-year programmes with thesis supervision by recognised scholars and global exchange opportunities.</p>
+      <a href="{% url 'login' %}" class="learn-more">Enrol now <i class="fa-solid fa-arrow-right fa-xs"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- FACILITIES -->
+<section class="facilities" id="facilities">
+  <span class="section-tag"><i class="fa-solid fa-building-columns fa-xs"></i>&nbsp; Campus Life</span>
+  <h2>Our Facilities</h2>
+  <p class="sub">State-of-the-art infrastructure designed to foster curiosity, wellness and community on campus every day.</p>
+  <div class="facilities-grid">
+    <div class="facility-card">
+      <span class="facility-tag">Learning</span>
+      <img src="{% static 'images/library.jpg' %}" alt="Library" onerror="this.src='https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&q=80'">
+      <div class="facility-info">
+        <h3>Standard Library</h3>
+        <p>Over 40,000 volumes, quiet study zones, digital archives and dedicated research assistance for all students.</p>
+      </div>
+    </div>
+    <div class="facility-card">
+      <span class="facility-tag">Recreation</span>
+      <img src="{% static 'images/playground.jpg' %}" alt="Playground" onerror="this.src='https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&q=80'">
+      <div class="facility-info">
+        <h3>Compact Playground</h3>
+        <p>Modern outdoor equipment, multi-sport courts and open green areas encouraging active play and teamwork.</p>
+      </div>
+    </div>
+    <div class="facility-card">
+      <span class="facility-tag">Dining</span>
+      <img src="{% static 'images/canteen.jpg' %}" alt="Canteen" onerror="this.src='https://images.unsplash.com/photo-1567521464027-f127ff144326?w=600&q=80'">
+      <div class="facility-info">
+        <h3>Healthy Canteen</h3>
+        <p>Nutritionally balanced meals prepared daily, with vegetarian, vegan and allergy-friendly options for everyone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <h2>Ready to Join EduBright Academy?</h2>
+  <p>Create your student account today and get access to the full Student Management Portal — courses, fees, exams and more.</p>
+  <div class="cta-actions">
+    <a href="{% url 'register' %}" class="hero-btn primary">
+      <i class="fa-solid fa-user-plus"></i> Create Account
+    </a>
+    <a href="{% url 'login' %}" class="hero-btn outline">
+      <i class="fa-solid fa-right-to-bracket"></i> Already have an account?
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <img src="{% static 'images/logo.png' %}" alt="Logo" onerror="this.style.display='none'">
+  <h2>Follow Us!</h2>
+  <p>Stay connected with EduBright Academy for the latest news, events and academic achievements from our vibrant community.</p>
+  <div class="social-icons">
+    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 EduBright Academy &mdash; Made with <i class="fa-solid fa-heart fa-xs" style="color:#e05a4e"></i> by 404 Brain Not Found!</p>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').style.padding =
+      window.scrollY > 60 ? '10px 6%' : '18px 6%';
+  });
+  // Scroll-in animation
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity='1'; e.target.style.transform='translateY(0)';
+        obs.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.12});
+  document.querySelectorAll('.course-card,.facility-card').forEach(el => {
+    el.style.opacity='0'; el.style.transform='translateY(28px)';
+    el.style.transition='opacity 0.6s ease, transform 0.6s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

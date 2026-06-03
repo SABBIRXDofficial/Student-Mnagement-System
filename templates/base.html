@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Student Management System{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --primary: #1a3c5e;
+            --accent:  #e67e22;
+            --light-bg: #f4f6f9;
+        }
+        body { background: var(--light-bg); font-family: 'Segoe UI', sans-serif; }
+
+        /* ── Sidebar ── */
+        #sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--primary);
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 1000;
+            transition: width .3s;
+            overflow-x: hidden;
+        }
+        #sidebar .brand {
+            padding: 20px 16px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,.1);
+            white-space: nowrap;
+        }
+        #sidebar .brand span { color: var(--accent); }
+        #sidebar .nav-section {
+            color: rgba(255,255,255,.4);
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 14px 16px 4px;
+        }
+        #sidebar .nav-link {
+            color: rgba(255,255,255,.75);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background .2s, color .2s;
+            white-space: nowrap;
+        }
+        #sidebar .nav-link:hover,
+        #sidebar .nav-link.active {
+            background: rgba(255,255,255,.12);
+            color: #fff;
+        }
+        #sidebar .nav-link i { font-size: 1.1rem; min-width: 20px; }
+
+        /* ── Main content ── */
+        #main { margin-left: var(--sidebar-width); }
+
+        /* ── Topbar ── */
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid #e0e4ea;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .topbar .page-title { font-size: 1.15rem; font-weight: 600; color: var(--primary); }
+
+        /* ── Cards ── */
+        .stat-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
+            transition: transform .2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card .icon {
+            width: 52px; height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+        .card-header { border-radius: 12px 12px 0 0 !important; }
+
+        /* ── Tables ── */
+        .table th { font-size: .82rem; text-transform: uppercase; letter-spacing: .5px; color: #6c757d; }
+        .table td { vertical-align: middle; }
+
+        /* ── Badges ── */
+        .badge { font-size: .75rem; }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+    <div class="brand"><i class="bi bi-mortarboard-fill"></i> &nbsp;SMS <span>Pro</span></div>
+
+    <div class="nav-section">Main</div>
+    <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+
+    <div class="nav-section">Academics</div>
+    <a href="{% url 'student_list' %}" class="nav-link {% if 'student' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-people-fill"></i> Students
+    </a>
+    <a href="{% url 'course_list' %}" class="nav-link {% if 'course' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-book-fill"></i> Courses
+    </a>
+    <a href="{% url 'exam_list' %}" class="nav-link {% if 'exam' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-file-earmark-text-fill"></i> Exams
+    </a>
+    <a href="{% url 'fee_list' %}" class="nav-link {% if 'fee' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-cash-stack"></i> Fees
+    </a>
+
+    <div class="nav-section">System</div>
+    <a href="{% url 'user_list' %}" class="nav-link {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-person-fill"></i> Users
+    </a>
+    <a href="{% url 'role_list' %}" class="nav-link {% if 'role' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-shield-fill"></i> Roles
+    </a>
+    <a href="{% url 'permission_list' %}" class="nav-link {% if 'permission' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-key-fill"></i> Permissions
+    </a>
+    <a href="{% url 'login_list' %}" class="nav-link {% if 'login_list' in request.resolver_match.url_name or 'login_create' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-door-open-fill"></i> Logins
+    </a>
+
+    <div class="nav-section">Admin</div>
+    <a href="/admin/" class="nav-link" target="_blank">
+        <i class="bi bi-tools"></i> Django Admin
+    </a>
+    <a href="{% url 'logout' %}" class="nav-link">
+        <i class="bi bi-box-arrow-left"></i> Logout
+    </a>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+    <div class="topbar">
+        <span class="page-title">{% block page_title %}Dashboard{% endblock %}</span>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted small">
+                <i class="bi bi-person-circle"></i>
+                {{ request.session.username }} &bull;
+                <span class="badge bg-primary">{{ request.session.role }}</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="p-4">
+        {% if messages %}
+            {% for msg in messages %}
+                <div class="alert alert-{{ msg.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                    {{ msg }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

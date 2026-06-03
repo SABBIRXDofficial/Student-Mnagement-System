@@ -1,0 +1,65 @@
+{% extends "sms_base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+{% with active="users" %}
+
+<div class="panel">
+  <h2>Add New User</h2>
+  <form method="POST" action="{% url 'user_create' %}">
+    {% csrf_token %}
+    <div class="form-row">
+      <div>
+        <input type="text" name="user_name" placeholder="Full Name" required>
+      </div>
+      <div>
+        <input type="email" name="user_email" placeholder="Email Address" required>
+      </div>
+    </div>
+    <br>
+    <div class="form-row">
+      <div>
+        <input type="tel" name="user_mobile" placeholder="Mobile Number">
+      </div>
+      <div>
+        <input type="text" name="user_address" placeholder="Address">
+      </div>
+    </div>
+    <br>
+    <button type="submit" class="btn-green">Save User</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>View User Data</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.user_id }}</td>
+        <td>{{ u.user_name }}</td>
+        <td>{{ u.user_email }}</td>
+        <td>{{ u.user_mobile|default:"—" }}</td>
+        <td>
+          <a href="{% url 'user_edit' u.user_id %}" class="btn-sm btn-edit">Edit</a>
+          <a href="{% url 'user_delete' u.user_id %}" class="btn-sm btn-del"
+             onclick="return confirm('Delete {{ u.user_name }}?')">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr class="empty-row"><td colspan="5">No users yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endwith %}
+{% endblock %}

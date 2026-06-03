@@ -1,0 +1,58 @@
+{% extends "sms_base.html" %}
+{% block title %}Exams{% endblock %}
+{% block content %}
+{% with active="exams" %}
+
+<div class="panel">
+  <h2>Add New Exam</h2>
+  <form method="POST" action="{% url 'exam_create' %}">
+    {% csrf_token %}
+    <select name="exam_type" required>
+      <option value="" disabled selected>Select Exam Type</option>
+      <option value="Midterm">Midterm</option>
+      <option value="Final">Final</option>
+      <option value="Quiz">Quiz</option>
+      <option value="Assignment">Assignment</option>
+      <option value="Practical">Practical</option>
+    </select>
+    <br><br>
+    <textarea name="exam_desc" placeholder="Exam Description"></textarea>
+    <br><br>
+    <button type="submit" class="btn-green">Save Exam</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>View Exam Data</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Exam ID</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Students</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in exams %}
+      <tr>
+        <td>{{ e.exam_id }}</td>
+        <td>{{ e.exam_type }}</td>
+        <td>{{ e.exam_desc|default:"—"|truncatechars:50 }}</td>
+        <td>{{ e.student_count }}</td>
+        <td>
+          <a href="{% url 'exam_edit' e.exam_id %}" class="btn-sm btn-edit">Edit</a>
+          <a href="{% url 'exam_delete' e.exam_id %}" class="btn-sm btn-del"
+             onclick="return confirm('Delete this exam?')">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr class="empty-row"><td colspan="5">No exams yet. Add one above.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endwith %}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "sms_base.html" %}
+{% block title %}Roles{% endblock %}
+{% block content %}
+{% with active="roles" %}
+
+<div class="panel">
+  <h2>Add New Role</h2>
+  <form method="POST" action="{% url 'role_create' %}">
+    {% csrf_token %}
+    <input type="text" name="role_name" placeholder="Role Name (e.g. Admin, Teacher)" required>
+    <br><br>
+    <textarea name="role_desc" placeholder="Role Description"></textarea>
+    <br><br>
+    <button type="submit" class="btn-green">Save Role</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>View Roles</h2>
+  <table class="data-table">
+    <thead>
+      <tr><th>ID</th><th>Name</th><th>Description</th><th>Users</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      {% for r in roles %}
+      <tr>
+        <td>{{ r.role_id }}</td>
+        <td>{{ r.role_name }}</td>
+        <td>{{ r.role_desc|default:"—"|truncatechars:60 }}</td>
+        <td>{{ r.user_count }}</td>
+        <td>
+          <a href="{% url 'role_edit' r.role_id %}" class="btn-sm btn-edit">Edit</a>
+          <a href="{% url 'role_delete' r.role_id %}" class="btn-sm btn-del"
+             onclick="return confirm('Delete role {{ r.role_name }}?')">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr class="empty-row"><td colspan="5">No roles yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endwith %}
+{% endblock %}

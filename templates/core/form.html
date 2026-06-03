@@ -1,0 +1,25 @@
+{% extends "sms_base.html" %}
+{% block title %}Edit{% endblock %}
+{% block content %}
+
+<div class="panel" style="max-width:700px;">
+  <h2>{{ title }}</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+        <div style="color:#dc3545; font-size:0.85rem; margin-top:4px;">{{ field.errors.0 }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <br>
+    <button type="submit" class="btn-green">Update</button>
+    &nbsp;
+    <a href="{% url back_url %}" style="color:#666; font-size:0.9rem; text-decoration:none;">← Cancel</a>
+  </form>
+</div>
+
+{% endblock %}

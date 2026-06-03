@@ -1,0 +1,67 @@
+{% extends "sms_base.html" %}
+{% block title %}Courses{% endblock %}
+{% block content %}
+{% with active="courses" %}
+
+<!-- ADD FORM -->
+<div class="panel">
+  <h2>Add New Course</h2>
+  <form method="POST" action="{% url 'course_create' %}">
+    {% csrf_token %}
+    <input type="text" name="crs_name" placeholder="Course ID (e.g. CRS-01)" required>
+    <br><br>
+    <input type="text" name="crs_name_full" placeholder="Course Name" required>
+    <br><br>
+    <textarea name="crs_desc" placeholder="Course Description"></textarea>
+    <br><br>
+    <select name="crs_type">
+      <option value="Technical">Technical</option>
+      <option value="Science">Science</option>
+      <option value="Commerce">Commerce</option>
+      <option value="Humanities">Humanities</option>
+      <option value="Arts">Arts</option>
+      <option value="Medical">Medical</option>
+      <option value="Engineering">Engineering</option>
+    </select>
+    <br><br>
+    <input type="number" name="crs_stu_id" placeholder="Assigned Student ID">
+    <br><br>
+    <button type="submit" class="btn-green">Save Course</button>
+  </form>
+</div>
+
+<!-- DATA TABLE -->
+<div class="panel">
+  <h2>View Course Data</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Student ID</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in courses %}
+      <tr>
+        <td>{{ c.crs_id }}</td>
+        <td>{{ c.crs_name }}</td>
+        <td>{{ c.crs_type|default:"—" }}</td>
+        <td>{{ c.student.stu_id|default:"—" }}</td>
+        <td>
+          <a href="{% url 'course_edit' c.crs_id %}" class="btn-sm btn-edit">Edit</a>
+          <a href="{% url 'course_delete' c.crs_id %}" class="btn-sm btn-del"
+             onclick="return confirm('Delete {{ c.crs_name }}?')">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr class="empty-row"><td colspan="5">No courses found. Add one above.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endwith %}
+{% endblock %}

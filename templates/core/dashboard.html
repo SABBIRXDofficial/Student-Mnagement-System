@@ -1,0 +1,433 @@
+{% extends "sms_base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ── TOPBAR ─────────────────────────────────── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px 22px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .topbar .greeting { font-size: 1.15rem; font-weight: 700; color: #1a1a1a; }
+  .topbar .greeting span { color: #008000; }
+  .topbar .meta { font-size: 0.82rem; color: #777; margin-top: 2px; }
+  .topbar .user-badge {
+    display: flex; align-items: center; gap: 10px;
+    background: #f0f8f0; border: 1px solid #c8e6c9;
+    border-radius: 30px; padding: 7px 16px 7px 10px;
+  }
+  .topbar .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #008000; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.95rem;
+  }
+  .topbar .uname { font-size: 0.9rem; font-weight: 600; color: #2b2b2b; }
+  .topbar .urole { font-size: 0.75rem; color: #008000; }
+
+  /* ── STAT CARDS ─────────────────────────────── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .stat-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 18px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border-left: 5px solid var(--accent, #008000);
+    transition: transform 0.2s;
+    cursor: default;
+  }
+  .stat-box:hover { transform: translateY(-3px); }
+  .stat-box:nth-child(1) { --accent: #008000; }
+  .stat-box:nth-child(2) { --accent: #0066cc; }
+  .stat-box:nth-child(3) { --accent: #f0a500; }
+  .stat-box:nth-child(4) { --accent: #dc3545; }
+  .stat-box:nth-child(5) { --accent: #6f42c1; }
+  .stat-box:nth-child(6) { --accent: #20c997; }
+
+  .stat-icon {
+    width: 46px; height: 46px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    background: color-mix(in srgb, var(--accent) 15%, white);
+    flex-shrink: 0;
+  }
+  .stat-text .num {
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--accent); display: block; line-height: 1;
+  }
+  .stat-text .lbl {
+    font-size: 0.78rem; color: #777;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    margin-top: 4px; display: block;
+  }
+
+  /* ── GRID ROWS ───────────────────────────────── */
+  .dash-row {
+    display: grid;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  .dash-row.col2 { grid-template-columns: 1fr 1fr; }
+  .dash-row.col3 { grid-template-columns: 2fr 1fr; }
+
+  /* ── PANEL HEADER ────────────────────────────── */
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .panel-header h3 {
+    font-size: 1.05rem; font-weight: 700; color: #1a1a1a;
+  }
+  .panel-header a {
+    font-size: 0.82rem; color: #008000; text-decoration: none; font-weight: 600;
+  }
+  .panel-header a:hover { text-decoration: underline; }
+
+  /* ── MINI TABLE ─────────────────────────────── */
+  .mini-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+  .mini-table th {
+    background:#f5f5f5; text-align:left; padding:8px 10px;
+    font-size:0.78rem; text-transform:uppercase; letter-spacing:0.5px; color:#666;
+    border-bottom:2px solid #e8e8e8;
+  }
+  .mini-table td { padding:9px 10px; border-bottom:1px solid #f0f0f0; color:#333; vertical-align:middle; }
+  .mini-table tr:last-child td { border-bottom: none; }
+  .mini-table tr:hover td { background:#fafafa; }
+  .mini-table .empty-row td { text-align:center; color:#aaa; font-style:italic; padding:18px; }
+
+  /* ── BADGE ───────────────────────────────────── */
+  .badge {
+    display: inline-block; padding: 3px 9px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 700;
+  }
+  .badge-green  { background:#d4edda; color:#155724; }
+  .badge-blue   { background:#d1ecf1; color:#0c5460; }
+  .badge-orange { background:#fff3cd; color:#856404; }
+  .badge-red    { background:#f8d7da; color:#721c24; }
+  .badge-purple { background:#e8d5f5; color:#5a2d82; }
+
+  /* ── QUICK LINKS ─────────────────────────────── */
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .quick-link {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 8px;
+    padding: 18px 12px;
+    background: #f8fff8; border: 1.5px solid #c8e6c9;
+    border-radius: 10px; text-decoration: none;
+    color: #1a1a1a; font-size: 0.85rem; font-weight: 600;
+    transition: all 0.2s; text-align: center;
+  }
+  .quick-link:hover {
+    background: #008000; color: #fff;
+    border-color: #008000; transform: translateY(-2px);
+  }
+  .quick-link .ql-icon { font-size: 1.4rem; }
+
+  /* ── ACTIVITY FEED ───────────────────────────── */
+  .activity-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid #f0f0f0;
+  }
+  .activity-item:last-child { border-bottom: none; }
+  .act-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    margin-top: 4px; flex-shrink: 0;
+  }
+  .act-dot.green  { background: #008000; }
+  .act-dot.blue   { background: #0066cc; }
+  .act-dot.orange { background: #f0a500; }
+  .act-text { font-size:0.88rem; color:#444; line-height:1.4; }
+  .act-time { font-size:0.75rem; color:#aaa; margin-top:2px; }
+
+  /* ── CHART BAR ───────────────────────────────── */
+  .bar-wrap { display:flex; flex-direction:column; gap:10px; }
+  .bar-item {}
+  .bar-label { font-size:0.82rem; color:#555; margin-bottom:4px; display:flex; justify-content:space-between; }
+  .bar-track { height:10px; background:#eee; border-radius:5px; overflow:hidden; }
+  .bar-fill  { height:10px; border-radius:5px; background:#008000; transition:width 0.8s ease; }
+  .bar-fill.blue   { background:#0066cc; }
+  .bar-fill.orange { background:#f0a500; }
+  .bar-fill.red    { background:#dc3545; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── TOPBAR ──────────────────────────────────── -->
+<div class="topbar">
+  <div>
+    <div class="greeting">Welcome back, <span>{{ request.session.username|default:"Admin" }}</span> 👋</div>
+    <div class="meta">Student Management System &mdash; Dashboard Overview</div>
+  </div>
+  <div class="user-badge">
+    <div class="avatar">{{ request.session.username|first|upper|default:"A" }}</div>
+    <div>
+      <div class="uname">{{ request.session.username|default:"Administrator" }}</div>
+      <div class="urole">{{ request.session.role|default:"Admin" }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STAT CARDS ──────────────────────────────── -->
+<div class="stats-grid">
+  <div class="stat-box">
+    <div class="stat-icon">🎓</div>
+    <div class="stat-text">
+      <span class="num">{{ total_students }}</span>
+      <span class="lbl">Total Students</span>
+    </div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-icon">📚</div>
+    <div class="stat-text">
+      <span class="num">{{ total_courses }}</span>
+      <span class="lbl">Total Courses</span>
+    </div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-icon">📝</div>
+    <div class="stat-text">
+      <span class="num">{{ total_exams }}</span>
+      <span class="lbl">Total Exams</span>
+    </div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-icon">💰</div>
+    <div class="stat-text">
+      <span class="num">৳{{ total_fees|floatformat:0 }}</span>
+      <span class="lbl">Total Fees</span>
+    </div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-icon">👤</div>
+    <div class="stat-text">
+      <span class="num">{{ total_users }}</span>
+      <span class="lbl">System Users</span>
+    </div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-icon">🛡️</div>
+    <div class="stat-text">
+      <span class="num">{{ total_roles }}</span>
+      <span class="lbl">Roles</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── ROW 1: Recent Students + Recent Courses ─── -->
+<div class="dash-row col2">
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>🎓 Recent Students</h3>
+      <a href="{% url 'student_list' %}">View all →</a>
+    </div>
+    <table class="mini-table">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th></tr>
+      </thead>
+      <tbody>
+        {% for s in recent_students %}
+        <tr>
+          <td><span class="badge badge-green">#{{ s.stu_id }}</span></td>
+          <td><strong>{{ s.stu_name }}</strong></td>
+          <td>{{ s.stu_email }}</td>
+          <td>{{ s.stu_mobile|default:"—" }}</td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="4">No students yet. <a href="{% url 'student_list' %}">Add one →</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>📚 Recent Courses</h3>
+      <a href="{% url 'course_list' %}">View all →</a>
+    </div>
+    <table class="mini-table">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Type</th></tr>
+      </thead>
+      <tbody>
+        {% for c in recent_courses %}
+        <tr>
+          <td><span class="badge badge-blue">#{{ c.crs_id }}</span></td>
+          <td><strong>{{ c.crs_name }}</strong></td>
+          <td>
+            {% if c.crs_type == "Technical" %}<span class="badge badge-blue">{{ c.crs_type }}</span>
+            {% elif c.crs_type == "Science" %}<span class="badge badge-green">{{ c.crs_type }}</span>
+            {% elif c.crs_type == "Commerce" %}<span class="badge badge-orange">{{ c.crs_type }}</span>
+            {% else %}<span class="badge badge-purple">{{ c.crs_type|default:"General" }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="3">No courses yet. <a href="{% url 'course_list' %}">Add one →</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ── ROW 2: Recent Fees + Quick Actions ─────── -->
+<div class="dash-row col3">
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>💰 Recent Fee Records</h3>
+      <a href="{% url 'fee_list' %}">View all →</a>
+    </div>
+    <table class="mini-table">
+      <thead>
+        <tr><th>Fee ID</th><th>Course</th><th>Type</th><th>Amount</th></tr>
+      </thead>
+      <tbody>
+        {% for f in recent_fees %}
+        <tr>
+          <td><span class="badge badge-orange">#{{ f.fee_id }}</span></td>
+          <td>{{ f.course.crs_name|truncatechars:20 }}</td>
+          <td>{{ f.fee_type }}</td>
+          <td><strong>৳{{ f.fee_amt }}</strong></td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="4">No fee records yet. <a href="{% url 'fee_list' %}">Add one →</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>⚡ Quick Actions</h3>
+    </div>
+    <div class="quick-grid">
+      <a href="{% url 'student_list' %}" class="quick-link">
+        <span class="ql-icon">🎓</span> Add Student
+      </a>
+      <a href="{% url 'course_list' %}" class="quick-link">
+        <span class="ql-icon">📚</span> Add Course
+      </a>
+      <a href="{% url 'fee_list' %}" class="quick-link">
+        <span class="ql-icon">💰</span> Add Fee
+      </a>
+      <a href="{% url 'exam_list' %}" class="quick-link">
+        <span class="ql-icon">📝</span> Add Exam
+      </a>
+      <a href="{% url 'user_list' %}" class="quick-link">
+        <span class="ql-icon">👤</span> Add User
+      </a>
+      <a href="{% url 'role_list' %}" class="quick-link">
+        <span class="ql-icon">🛡️</span> Add Role
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── ROW 3: Exams + System Overview ─────────── -->
+<div class="dash-row col2">
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>📝 Recent Exams</h3>
+      <a href="{% url 'exam_list' %}">View all →</a>
+    </div>
+    <table class="mini-table">
+      <thead>
+        <tr><th>ID</th><th>Type</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        {% for e in recent_exams %}
+        <tr>
+          <td><span class="badge badge-purple">#{{ e.exam_id }}</span></td>
+          <td>
+            {% if e.exam_type == "Final" %}<span class="badge badge-red">{{ e.exam_type }}</span>
+            {% elif e.exam_type == "Midterm" %}<span class="badge badge-orange">{{ e.exam_type }}</span>
+            {% else %}<span class="badge badge-blue">{{ e.exam_type }}</span>{% endif %}
+          </td>
+          <td>{{ e.exam_desc|default:"—"|truncatechars:45 }}</td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="3">No exams yet. <a href="{% url 'exam_list' %}">Add one →</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>📊 System Overview</h3>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>Students</span>
+          <strong>{{ total_students }}</strong>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: {% if total_students > 0 %}{% widthratio total_students total_max 100 %}{% else %}0{% endif %}%"></div>
+        </div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>Courses</span>
+          <strong>{{ total_courses }}</strong>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill blue" style="width: {% if total_courses > 0 %}{% widthratio total_courses total_max 100 %}{% else %}0{% endif %}%"></div>
+        </div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>Exams</span>
+          <strong>{{ total_exams }}</strong>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill orange" style="width: {% if total_exams > 0 %}{% widthratio total_exams total_max 100 %}{% else %}0{% endif %}%"></div>
+        </div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>Users</span>
+          <strong>{{ total_users }}</strong>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill red" style="width: {% if total_users > 0 %}{% widthratio total_users total_max 100 %}{% else %}0{% endif %}%"></div>
+        </div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>Roles</span>
+          <strong>{{ total_roles }}</strong>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="background:#6f42c1; width: {% if total_roles > 0 %}{% widthratio total_roles total_max 100 %}{% else %}0{% endif %}%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "sms_base.html" %}
+{% block title %}Permissions{% endblock %}
+{% block content %}
+{% with active="permissions" %}
+
+<div class="panel">
+  <h2>Add New Permission</h2>
+  <form method="POST" action="{% url 'permission_create' %}">
+    {% csrf_token %}
+    <select name="per_role" required>
+      <option value="" disabled selected>Select Role</option>
+      {% for r in roles %}
+      <option value="{{ r.role_id }}">{{ r.role_name }}</option>
+      {% endfor %}
+    </select>
+    <br><br>
+    <input type="text" name="per_name" placeholder="Permission Name (e.g. View, Edit)" required>
+    <br><br>
+    <input type="text" name="per_module" placeholder="Module (e.g. Students, Courses)" required>
+    <br><br>
+    <button type="submit" class="btn-green">Save Permission</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>View Permissions</h2>
+  <table class="data-table">
+    <thead>
+      <tr><th>ID</th><th>Role</th><th>Permission</th><th>Module</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      {% for p in perms %}
+      <tr>
+        <td>{{ p.per_id }}</td>
+        <td>{{ p.per_role.role_name }}</td>
+        <td>{{ p.per_name }}</td>
+        <td>{{ p.per_module }}</td>
+        <td>
+          <a href="{% url 'permission_edit' p.per_id %}" class="btn-sm btn-edit">Edit</a>
+          <a href="{% url 'permission_delete' p.per_id %}" class="btn-sm btn-del"
+             onclick="return confirm('Delete this permission?')">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr class="empty-row"><td colspan="5">No permissions yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endwith %}
+{% endblock %}
